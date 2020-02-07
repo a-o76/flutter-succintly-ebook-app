@@ -37,4 +37,14 @@ class DateUtils {
     }
   }
 
+  // Remove whitespaces from date
+  static String TrimDate(String dt) {
+    if (dt.contains(" ")) {
+      List<String> p = dt.split(" ");
+      return p[0];
+    } else {
+      return dt;
+    }
+  }
+
 }
