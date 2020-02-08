@@ -22,12 +22,30 @@ class Val {
     return (dd > 0) ? dd.toString() : "0";
   }
 
+  static bool strToBool(String str) {
+    return (int.parse(str) > 0) ? true : false;
+  }
+
+  static bool intToBool(int val) {
+    return (val > 0) ? true : false;
+  }
+
+  static String boolToStr(bool val) {
+    return (val == true) ? '1' : '0';
+  }
+
+  static int boolToInt(bool val) {
+    return (val == true) ? 1 : 0;
+  }
+
+  
+
 }
 
 // this class is used to format and validate dates
 class DateUtils {
 
-  // convert a given date to yyyy-MM-dd format
+  // try to convert a given date to yyyy-MM-dd format
   static DateTime convertToDate(String input) {
     try {
       var d = new DateFormat("yyyy-MM-dd").parseStrict(input);
@@ -38,12 +56,32 @@ class DateUtils {
   }
 
   // Remove whitespaces from date
-  static String TrimDate(String dt) {
+  static String trimDate(String dt) {
     if (dt.contains(" ")) {
       List<String> p = dt.split(" ");
       return p[0];
     } else {
       return dt;
+    }
+  }
+
+  // try to convert a given date to "day (month as text) year"
+  static String convertToDateFull(String input) {
+    try {
+      var d = new DateFormat('yyyy-MM-dd').parseStrict(input);
+      var formatter = new DateFormat('dd MMM yyyy');
+      return formatter.format(d);
+    } catch(e) {
+      return null;
+    }
+  }
+
+  static String convertToDateFullDt(DateTime input) {
+    try {
+      var formatter = new DateFormat('dd MMM yyyy');
+      return formatter.format(input);
+    } catch(e) {
+      return null;
     }
   }
 
