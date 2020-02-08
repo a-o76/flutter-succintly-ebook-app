@@ -5,6 +5,8 @@ import 'package:path_provider/path_provider.dart';
 import 'dart:async';
 import 'dart:io';
 
+import 'package:succintly_flutter_book_app/model/model.dart';
+
 class DbHelper {
 
   static String tblDocs = "docs";
@@ -57,5 +59,42 @@ class DbHelper {
       "$fqMonth INTEGER)"
     );
   }
+
+  // given a doc map it and insert in the tblDocs
+  Future<int> insertDoc(Doc doc) async {
+    var r;
+
+    Database db = await this.db;
+
+    try {
+      r = await db.insert(tblDocs, doc.toMap());
+    } catch(e) {
+      debugPrint("insertDoc: " + e.toString());
+    }
+
+    return r;
+
+  }
+
+  // the the docs that ordering by expiration day
+  Future<List> getDocs() async {
+    Database db = await this.db;
+    var r = await db.rawQuery(
+      "SELECT * FROM $tblDocs ORDER BY $docExpiration ASC"
+    );
+    return r;
+  }
+
+  Future<List> getDoc(int id) async {
+    Database db = await this.db;
+    var r = await db.rawQuery(
+      "SELECT * FROM $tblDocs WHERE $docId = " + id.toString() + ""
+    )
+
+    return r;
+  }
+
+  // !important : the use of future is to avoid the need of waiting the dabtase operations
+  // to be finish to continue app usage
 
 }
