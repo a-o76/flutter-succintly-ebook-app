@@ -26,7 +26,6 @@ class DbHelper {
   // Factory constructor - create the internal instance
   DbHelper._internal();
 
-
   // the factory returns the singleton
   factory DbHelper() => _dbHelper;
 
@@ -89,12 +88,49 @@ class DbHelper {
     Database db = await this.db;
     var r = await db.rawQuery(
       "SELECT * FROM $tblDocs WHERE $docId = " + id.toString() + ""
-    )
+    );
+    return r;
+  }
+
+  // I can't understand this method... if you have the id why you need to inform the doc expiration
+  // date to retrieve the doc?  
+  Future<List> getDocFromStr(String payload) async {
+    List<String> p = payload.split('|');
+    if ( p.length == 2 ) {
+      Database db = await this.db;
+      var r = await db.rawQuery(
+        "SELECT * FROM $tblDocs WHERE $docId = " + p[0] +
+        " AND $docExpiration = '" + p[1] + "'"
+      );
+      return r;
+    } else {
+      return null;
+    }
+  }
+
+  // return integer - count of the docs in the db
+  Future<int> getDocsCount() async {
+    Database db = await this.db;
+    var r = Sqflite.firstIntValue(
+      await db.rawQuery('SELECT COUNT(*) FROM $tblDocs')
+    );
+
+    return r;
+  }
+
+  //get the max id on the db
+  Future<int> getMaxId() async {
+    Database db = await this.db;
+
+    var r = Sqflite.firstIntValue(
+      await db.rawQuery('SELECT MAX(id) FROM $tblDocs')
+    );
 
     return r;
   }
 
   // !important : the use of future is to avoid the need of waiting the dabtase operations
   // to be finish to continue app usage
+  // [https://dart.dev/codelabs/async-await]
 
 }
