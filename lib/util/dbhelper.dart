@@ -129,6 +129,21 @@ class DbHelper {
     return r;
   }
 
+  // update doc
+  Future<int> updateDoc(Doc doc) async {
+    var db = await this.db;
+    var r = await db.update(tblDocs, doc.toMap(),
+      where: "$docId = ?", whereArgs: [doc.id]);
+    return r;
+  }
+
+  // delete a doc given an id
+  Future<int> deleteDoc(int id) async {
+    var db = await this.db;
+    int r = await db.rawDelete("DELETE FROM $tblDocs WHERE $docId = $id");
+    return r;
+  }
+
   // !important : the use of future is to avoid the need of waiting the dabtase operations
   // to be finish to continue app usage
   // [https://dart.dev/codelabs/async-await]
