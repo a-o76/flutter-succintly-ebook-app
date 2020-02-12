@@ -85,4 +85,10 @@ class DateUtils {
     }
   }
 
+  static String ftDateAsStr(DateTime ft) {
+    return ft.year.toString() + "-" +
+      ft.month.toString().padLeft(2,"0") + "-" +
+      ft.day.toString().padLeft(2,"0");
+  }
+
 }

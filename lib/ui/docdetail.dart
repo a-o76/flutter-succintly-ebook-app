@@ -28,6 +28,7 @@ class DocDetail extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() => DocDetailState();
+  
 }
 
 class DocDetailState extends State<DocDetail> {
@@ -52,6 +53,49 @@ class DocDetailState extends State<DocDetail> {
   bool fqQuarterCtrl = true;
   bool fqMonthCtrl = true;
   bool fqLessMonthCtrl = true;
+
+   // initilize the values of the doc on the inputs
+  void _initCtrls() {
+
+    titleCtrl.text = widget.doc.title != null ? widget.doc.title : "";
+    expirationCtrl.text = widget.doc.expiration != null ? widget.doc.expiration : "";
+
+    fqYearCtrl = widget.doc.fqYear != null ?
+    Val.intToBool(widget.doc.fqYear) : false;
+
+    fqHalfYearCtrl = widget.doc.fqHalfYear != null ?
+    Val.intToBool(widget.doc.fqHalfYear) : false;
+
+    fqQuarterCtrl = widget.doc.fqQuarter != null ?
+    Val.intToBool(widget.doc.fqQuarter) : false;
+
+    fqMonthCtrl = widget.doc.fqMonth != null ?
+    Val.intToBool(widget.doc.fqMonth) : false;
+
+  }
+
+  // the build context handles the location of the widget in flutter internal widget tree
+  Future _chooseDate(BuildContext context, String initialDateString) async {
+
+    var now = new DateTime.now();
+    // when initialdatestring is null them set the actual date
+    var initialDate = DateUtils.convertToDate(initialDateString) ?? now;
+
+    initialDate = (initialDate.year >= now.year &&
+      initialDate.isAfter(now) ? initialDate : now);
+
+    // the component datepicker using the initial date as currenttime
+    DatePicker.showDatePicker(context, showTitleActions: true,
+      onConfirm: (date) {
+        setState(() {
+          // when the user confirm the date it sets to the expiration controller state
+          DateTime dt = date;
+          String r = DateUtils.ftDateAsStr(dt);
+          expirationCtrl.text = r;
+        });
+      },
+      currentTime: initialDate);
+  }
 
 
 }
