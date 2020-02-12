@@ -98,4 +98,46 @@ class DocDetailState extends State<DocDetail> {
   }
 
 
+  void _selectMenu(String value) async {
+    switch(value) {
+      case menuDelete:
+        if ( widget.doc.id == -1 ) {
+          return;
+        }
+
+        await _deleteDoc(widget.doc.id);
+    }
+  }
+
+  Future _deleteDoc(int id) async {
+    await widget.dbh.deleteDoc(widget.doc.id);
+    Navigator.pop(context, true);
+  }
+
+  void _saveDoc() {
+    widget.doc.title = titleCtrl.text;
+    widget.doc.expiration = expirationCtrl.text;
+
+    widget.doc.fqYear = Val.boolToInt(fqYearCtrl);
+    widget.doc.fqHalfYear = Val.boolToInt(fqHalfYearCtrl);
+    widget.doc.fqQuarter = Val.boolToInt(fqQuarterCtrl);
+    widget.doc.fqMonth = Val.boolToInt(fqMonthCtrl);
+
+    // if has an id then its a update
+    if (widget.doc.id > -1) {
+      debugPrint('_update->Doc Id: ' + widget.doc.id.toString());
+      widget.dbh.updateDoc(widget.doc);
+      Navigator.pop(context, true);
+    // otherwise its an insertion
+    } else {
+      Future<int> idd = widget.dbh.getMaxId();
+      idd.then((result) {
+        debugPrint("_insert->Doc Id: " + widget.doc.id.toString());
+        widget.doc.id = (result != null) ? result + 1 : 1;
+        widget.dbh.insertDoc(widget.doc);
+        Navigator.pop(context, true);
+      });
+    }
+  }
+
 }
