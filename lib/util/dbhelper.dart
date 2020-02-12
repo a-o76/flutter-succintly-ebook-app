@@ -8,7 +8,6 @@ import 'dart:io';
 import 'package:succintly_flutter_book_app/model/model.dart';
 
 class DbHelper {
-
   static String tblDocs = "docs";
 
   String docId = "id";
@@ -34,10 +33,9 @@ class DbHelper {
 
   // create (if its not created yet) and returns the database
   Future<Database> get db async {
-    if (_db == null)
-      _db = await initializeDb();
+    if (_db == null) _db = await initializeDb();
 
-      return _db;
+    return _db;
   }
 
   // create the database
@@ -52,11 +50,10 @@ class DbHelper {
   // method execute when the database is created
   void _createDb(Database db, int version) async {
     await db.execute(
-      "CREATE TABLE $tblDocs($docId INTEGER PRIMARY KEY, $docTitle TEXT, "
-      + "$docExpiration TEXT, " +
-      "$fqYear INTEGER, $fqHalfYear INTEGER, $fqQuarter INTEGER, " +
-      "$fqMonth INTEGER)"
-    );
+        "CREATE TABLE $tblDocs($docId INTEGER PRIMARY KEY, $docTitle TEXT, " +
+            "$docExpiration TEXT, " +
+            "$fqYear INTEGER, $fqHalfYear INTEGER, $fqQuarter INTEGER, " +
+            "$fqMonth INTEGER)");
   }
 
   // given a doc map it and insert in the tblDocs
@@ -67,41 +64,39 @@ class DbHelper {
 
     try {
       r = await db.insert(tblDocs, doc.toMap());
-    } catch(e) {
+    } catch (e) {
       debugPrint("insertDoc: " + e.toString());
     }
 
     return r;
-
   }
 
   // the the docs that ordering by expiration day
   Future<List> getDocs() async {
     Database db = await this.db;
-    var r = await db.rawQuery(
-      "SELECT * FROM $tblDocs ORDER BY $docExpiration ASC"
-    );
+    var r =
+        await db.rawQuery("SELECT * FROM $tblDocs ORDER BY $docExpiration ASC");
     return r;
   }
 
   Future<List> getDoc(int id) async {
     Database db = await this.db;
     var r = await db.rawQuery(
-      "SELECT * FROM $tblDocs WHERE $docId = " + id.toString() + ""
-    );
+        "SELECT * FROM $tblDocs WHERE $docId = " + id.toString() + "");
     return r;
   }
 
   // I can't understand this method... if you have the id why you need to inform the doc expiration
-  // date to retrieve the doc?  
+  // date to retrieve the doc?
   Future<List> getDocFromStr(String payload) async {
     List<String> p = payload.split('|');
-    if ( p.length == 2 ) {
+    if (p.length == 2) {
       Database db = await this.db;
-      var r = await db.rawQuery(
-        "SELECT * FROM $tblDocs WHERE $docId = " + p[0] +
-        " AND $docExpiration = '" + p[1] + "'"
-      );
+      var r = await db.rawQuery("SELECT * FROM $tblDocs WHERE $docId = " +
+          p[0] +
+          " AND $docExpiration = '" +
+          p[1] +
+          "'");
       return r;
     } else {
       return null;
@@ -112,8 +107,7 @@ class DbHelper {
   Future<int> getDocsCount() async {
     Database db = await this.db;
     var r = Sqflite.firstIntValue(
-      await db.rawQuery('SELECT COUNT(*) FROM $tblDocs')
-    );
+        await db.rawQuery('SELECT COUNT(*) FROM $tblDocs'));
 
     return r;
   }
@@ -123,8 +117,7 @@ class DbHelper {
     Database db = await this.db;
 
     var r = Sqflite.firstIntValue(
-      await db.rawQuery('SELECT MAX(id) FROM $tblDocs')
-    );
+        await db.rawQuery('SELECT MAX(id) FROM $tblDocs'));
 
     return r;
   }
@@ -132,8 +125,8 @@ class DbHelper {
   // update doc
   Future<int> updateDoc(Doc doc) async {
     var db = await this.db;
-    var r = await db.update(tblDocs, doc.toMap(),
-      where: "$docId = ?", whereArgs: [doc.id]);
+    var r = await db
+        .update(tblDocs, doc.toMap(), where: "$docId = ?", whereArgs: [doc.id]);
     return r;
   }
 

@@ -1,18 +1,16 @@
-
 //  This package contains code to deal with internationalized/localized messages,
 //  date and number parsing and other internalization issues.
 import 'package:intl/intl.dart';
 
 // this is a validation class with general rules
 class Val {
-
   // validated if the given title has a value
   static String validateTitle(String val) {
     return (val != null && val != '') ? null : 'Title cannot be empty';
   }
 
   // given an string date, parses it, get the actual time
-  // compare the difference between both and return the time to expire from now 
+  // compare the difference between both and return the time to expire from now
   static String getExpiryStr(String expires) {
     var e = DateUtils.convertToDate(expires);
     var td = new DateTime.now();
@@ -37,20 +35,16 @@ class Val {
   static int boolToInt(bool val) {
     return (val == true) ? 1 : 0;
   }
-
-  
-
 }
 
 // this class is used to format and validate dates
 class DateUtils {
-
   // try to convert a given date to yyyy-MM-dd format
   static DateTime convertToDate(String input) {
     try {
       var d = new DateFormat("yyyy-MM-dd").parseStrict(input);
       return d;
-    } catch(e) {
+    } catch (e) {
       return null;
     }
   }
@@ -71,7 +65,7 @@ class DateUtils {
       var d = new DateFormat('yyyy-MM-dd').parseStrict(input);
       var formatter = new DateFormat('dd MMM yyyy');
       return formatter.format(d);
-    } catch(e) {
+    } catch (e) {
       return null;
     }
   }
@@ -80,15 +74,16 @@ class DateUtils {
     try {
       var formatter = new DateFormat('dd MMM yyyy');
       return formatter.format(input);
-    } catch(e) {
+    } catch (e) {
       return null;
     }
   }
 
   static String ftDateAsStr(DateTime ft) {
-    return ft.year.toString() + "-" +
-      ft.month.toString().padLeft(2,"0") + "-" +
-      ft.day.toString().padLeft(2,"0");
+    return ft.year.toString() +
+        "-" +
+        ft.month.toString().padLeft(2, "0") +
+        "-" +
+        ft.day.toString().padLeft(2, "0");
   }
-
 }

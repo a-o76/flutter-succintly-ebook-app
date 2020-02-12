@@ -1,4 +1,3 @@
-
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -14,9 +13,7 @@ import '../util/dbhelper.dart';
 const menuDelete = "Delete";
 
 // options on the menu
-final List<String> menuOptions = const <String> [
-  menuDelete
-];
+final List<String> menuOptions = const <String>[menuDelete];
 
 class DocDetail extends StatefulWidget {
   Doc doc;
@@ -28,12 +25,9 @@ class DocDetail extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() => DocDetailState();
-  
 }
 
 class DocDetailState extends State<DocDetail> {
-
-
   // this too variables are used to keep the state of the form after being submited
   // keep the state of a form widget
   final GlobalKey<FormState> _formKey = new GlobalKey<FormState>();
@@ -45,7 +39,8 @@ class DocDetailState extends State<DocDetail> {
 
   // handy controller for a text field
   final TextEditingController titleCtrl = TextEditingController();
-  final TextEditingController expirationCtrl = MaskedTextController(mask: '2000-00-00');
+  final TextEditingController expirationCtrl =
+      MaskedTextController(mask: '2000-00-00');
 
   // represents the Doc data
   bool fqYearCtrl = true;
@@ -54,54 +49,53 @@ class DocDetailState extends State<DocDetail> {
   bool fqMonthCtrl = true;
   bool fqLessMonthCtrl = true;
 
-   // initilize the values of the doc on the inputs
+  // initilize the values of the doc on the inputs
   void _initCtrls() {
-
     titleCtrl.text = widget.doc.title != null ? widget.doc.title : "";
-    expirationCtrl.text = widget.doc.expiration != null ? widget.doc.expiration : "";
+    expirationCtrl.text =
+        widget.doc.expiration != null ? widget.doc.expiration : "";
 
-    fqYearCtrl = widget.doc.fqYear != null ?
-    Val.intToBool(widget.doc.fqYear) : false;
+    fqYearCtrl =
+        widget.doc.fqYear != null ? Val.intToBool(widget.doc.fqYear) : false;
 
-    fqHalfYearCtrl = widget.doc.fqHalfYear != null ?
-    Val.intToBool(widget.doc.fqHalfYear) : false;
+    fqHalfYearCtrl = widget.doc.fqHalfYear != null
+        ? Val.intToBool(widget.doc.fqHalfYear)
+        : false;
 
-    fqQuarterCtrl = widget.doc.fqQuarter != null ?
-    Val.intToBool(widget.doc.fqQuarter) : false;
+    fqQuarterCtrl = widget.doc.fqQuarter != null
+        ? Val.intToBool(widget.doc.fqQuarter)
+        : false;
 
-    fqMonthCtrl = widget.doc.fqMonth != null ?
-    Val.intToBool(widget.doc.fqMonth) : false;
-
+    fqMonthCtrl =
+        widget.doc.fqMonth != null ? Val.intToBool(widget.doc.fqMonth) : false;
   }
 
   // the build context handles the location of the widget in flutter internal widget tree
   Future _chooseDate(BuildContext context, String initialDateString) async {
-
     var now = new DateTime.now();
     // when initialdatestring is null them set the actual date
     var initialDate = DateUtils.convertToDate(initialDateString) ?? now;
 
-    initialDate = (initialDate.year >= now.year &&
-      initialDate.isAfter(now) ? initialDate : now);
+    initialDate = (initialDate.year >= now.year && initialDate.isAfter(now)
+        ? initialDate
+        : now);
 
     // the component datepicker using the initial date as currenttime
     DatePicker.showDatePicker(context, showTitleActions: true,
-      onConfirm: (date) {
-        setState(() {
-          // when the user confirm the date it sets to the expiration controller state
-          DateTime dt = date;
-          String r = DateUtils.ftDateAsStr(dt);
-          expirationCtrl.text = r;
-        });
-      },
-      currentTime: initialDate);
+        onConfirm: (date) {
+      setState(() {
+        // when the user confirm the date it sets to the expiration controller state
+        DateTime dt = date;
+        String r = DateUtils.ftDateAsStr(dt);
+        expirationCtrl.text = r;
+      });
+    }, currentTime: initialDate);
   }
 
-
   void _selectMenu(String value) async {
-    switch(value) {
+    switch (value) {
       case menuDelete:
-        if ( widget.doc.id == -1 ) {
+        if (widget.doc.id == -1) {
           return;
         }
 
@@ -128,7 +122,7 @@ class DocDetailState extends State<DocDetail> {
       debugPrint('_update->Doc Id: ' + widget.doc.id.toString());
       widget.dbh.updateDoc(widget.doc);
       Navigator.pop(context, true);
-    // otherwise its an insertion
+      // otherwise its an insertion
     } else {
       Future<int> idd = widget.dbh.getMaxId();
       idd.then((result) {
@@ -140,4 +134,18 @@ class DocDetailState extends State<DocDetail> {
     }
   }
 
+  void _submitForm() {
+    final FormState form = _formKey.currentState;
+
+    if (!form.validate()) {
+      showMessage('Some data is invalid. Please correct.');
+    } else {
+      _saveDoc();
+    }
+  }
+
+  void showMessage(String message, [MaterialColor color = Colors.red]) {
+    _scaffoldKey.currentState.showSnackBar(
+        new SnackBar(backgroundColor: color, content: new Text(message)));
+  }
 }
